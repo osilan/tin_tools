@@ -6,15 +6,13 @@ import tempfile
 from shyft.hydrology import shyftdata_dir
 from shyft.hydrology.pt_gs_k import PTGSKModel
 
-
-
-# if sys.platform.startswith("win"):
-#     pytest.skip("skipping rasputin based test on windows", allow_module_level=True)
+if sys.platform.startswith("win"):
+    pytest.skip("skipping rasputin based test on windows", allow_module_level=True)
 
 
 def tin_region_model_repository() -> Any:
     if os.name != 'nt':
-        from cf_region_model_repository_tin import CFRegionModelRepository
+        from cf_region_model_repository import CFRegionModelRepository
         return CFRegionModelRepository
     else:
         raise RuntimeError("TIN models are only available for generation/testing on windows")
@@ -35,8 +33,8 @@ def region() -> Dict:
                                'data_file': os.path.join(shyftdata_dir, 'netcdf/orchestration-testdata/tin_cell_data.nc'),
                                #'data_file': os.path.abspath('netcdf/orchestration-testdata/tin_cell_data.nc'),
                                'get_model_from_tin_repo': True,
-                               'tin_data_folder': os.path.abspath( "tin_archive/"),
-                               'tin_uid': ['test-tin-0'],  # tin_uid=filename=catchment_id, here use can use list to load all required sub-catchments
+                               'tin_data_folder': os.path.abspath( 'tin_archive/'),
+                               'tin_uid': ['test_cid0'],  # tin_uid=filename=catchment_id, here use can use list to load all required sub-catchments
                            }},
             }
 
