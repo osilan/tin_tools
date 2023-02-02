@@ -512,14 +512,12 @@ class CFRegionModelRepository(interfaces.RegionModelRepository):
             fv = np.asarray(faces)
             #projstring = "EPSG:32645"  # default to Nepal
             projstring = "zone=45"
+            land_covers_names = []
             for c in materials:
                 (value, name) = get_land_type(c, land_covers)
-            # TODO: make conneciton between materials and shytf internal types. Attention! my current version uio-experimental has more types than master
-            lt_lf_value = 0
-            lt_ff_value = 1
-            lt_gf_value = 0
-            lt_rf_value = 0
-            lt_uf_value = 0
+                land_covers_names.append(name.decode('utf-8'))
+                print(name.decode('utf-8'))
+
             # source_cs = v.projection
             # TODO: if rasputin ends u with epsg string change here:
             # source_cs = "EPSG:32633"
@@ -545,11 +543,29 @@ class CFRegionModelRepository(interfaces.RegionModelRepository):
             tin_v0_arr = np.append(tin_v0_arr, v0)
             tin_v1_arr = np.append(tin_v1_arr, v1)
             tin_v2_arr = np.append(tin_v2_arr, v2)
-            lf = np.append(lf, (np.full(len(v0), lt_lf_value)))
-            ff = np.append(ff, np.full(len(v0), lt_ff_value))
-            rf = np.append(rf, np.full(len(v0), lt_rf_value))
-            gf = np.append(gf, np.full(len(v0), lt_gf_value))
-            uf = np.append(uf, np.full(len(v0), lt_uf_value))
+            # TODO: make more land cover types on shyft side in main branch
+            # parsing to shyft internal types: lf -lake/water body, ff - forest, rf - reservoir, gf - glacier, uf - undefiened
+            for lc in land_covers_names:
+                print(lc)
+                if lc=="snow_and_ice":
+                    lf = np.append(lf, 0)
+                    ff = np.append(ff, 0)
+                    rf = np.append(rf, 0)
+                    gf = np.append(gf, 1)
+                    uf = np.append(uf, 0)
+                elif lc=="bare":
+                    lf = np.append(lf, 0)
+                    ff = np.append(ff, 0)
+                    rf = np.append(rf, 0)
+                    gf = np.append(gf, 0)
+                    uf = np.append(uf, 1)
+                else:
+                    lf = np.append(lf, 0)
+                    ff = np.append(ff, 1)
+                    rf = np.append(rf, 0)
+                    gf = np.append(gf, 0)
+                    uf = np.append(uf, 0)
+            print(ff)
             c_ids = np.append(c_ids,np.full(len(v0),cid_val))
 
             tin_x0_arr = tin_v0_arr.reshape(-1)[0::3]
